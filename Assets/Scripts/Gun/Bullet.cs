@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    [SerializeField] private GameObject _bulletVFX;
     [SerializeField] private float _moveSpeed = 10f;
     [SerializeField] private int _damageAmount = 1;
+    [SerializeField] private float _knockbackThrust = 19f;
 
     private Vector2 _fireDirection;
 
@@ -39,8 +41,14 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Instantiate(_bulletVFX, transform.position, Quaternion.identity);
         Health health = other.gameObject.GetComponent<Health>();
         health?.TakeDamage(_damageAmount);
+
+        KnockBack knockBack = other.gameObject.GetComponent<KnockBack>();
+        knockBack?.GetKnockedBack(PlayerController.Instance.transform.position, _knockbackThrust);
+        Flash flash = other.gameObject.GetComponent<Flash>();
+        flash?.StartFlash();
         _gun.ReleaseBulletFromPool(this);
     }
 }

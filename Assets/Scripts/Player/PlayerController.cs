@@ -1,20 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Android.Gradle.Manifest;
 using UnityEngine;
+using System;
+
 
 public class PlayerController : MonoBehaviour
 {
+    public static Action OnJump;
     public static PlayerController Instance;
 
+    public Vector2 MoveInput => _frameInput.Move;
     [SerializeField] private Transform _feetTransform;
     [SerializeField] private Vector2 _groundCheck;
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private float _jumpStrength = 7f;
     [SerializeField] private float _extraGravity = 700f;
     [SerializeField] private float _gravityDelay = .2f;
-
+    [SerializeField] private float _coyoteTime = .5f;
     private float _timeInAir;
+    private float _coyoteTimer;
+    private bool _doubleJumpAvailable;
 
     private PlayerInput _playerInput;
     private FrameInput _frameInput;
@@ -33,22 +36,47 @@ public class PlayerController : MonoBehaviour
         _movement = GetComponent<Movement>();
     }
 
+    private void OnEnable()
+    {
+        OnJump += ApplyJumpForce;
+    }
+
+    private void OnDisable()
+    {
+        OnJump -= ApplyJumpForce;
+    }
+
     private void Update()
     {
         GatherInput();
         Movement();
-        Jump();
+        CoyoteTimer();
+        HandleJump();
         HandleSpriteFlip();
         GravityDelay();
     }
 
-     private void FixedUpdate() {
+    private void CoyoteTimer()
+    {
+        if (CheckGrounded())
+        {
+            _coyoteTimer = _coyoteTime;
+            _doubleJumpAvailable = true;
+        }
+        else
+        {
+            _coyoteTimer -= Time.deltaTime;
+        }
+    }
+
+    private void FixedUpdate()
+    {
         ExtraGravity();
     }
 
 
 
-  
+
 
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -71,10 +99,14 @@ public class PlayerController : MonoBehaviour
         return transform.eulerAngles.y == 0;
     }
 
-    private bool CheckGrounded()
+    public bool CheckGrounded()
     {
         Collider2D isGround = Physics2D.OverlapBox(_feetTransform.position, _groundCheck, 0, _groundLayer);
         return isGround;
+    }
+    public float GetCurrentMoveX()
+    {
+        return _frameInput.Move.x;
     }
 
     private void OnDrawGizmos()
@@ -82,17 +114,23 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(_feetTransform.position, _groundCheck);
     }
-     
-      private void GravityDelay() {
-        if (!CheckGrounded()) {
+
+    private void GravityDelay()
+    {
+        if (!CheckGrounded())
+        {
             _timeInAir += Time.deltaTime;
-        } else {
+        }
+        else
+        {
             _timeInAir = 0f;
         }
     }
 
-    private void ExtraGravity() {
-        if (_timeInAir > _gravityDelay) {
+    private void ExtraGravity()
+    {
+        if (_timeInAir > _gravityDelay)
+        {
             _rigidBody.AddForce(new Vector2(0f, -_extraGravity * Time.deltaTime));
         }
     }
@@ -106,12 +144,13 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void Movement() {
+    private void Movement()
+    {
 
         _movement.SetCurrentDir(_frameInput.Move.x);
     }
 
-    private void Jump()
+    private void HandleJump()
     {
         if (!_frameInput.Jump)
         {
@@ -119,8 +158,27 @@ public class PlayerController : MonoBehaviour
         }
         if (CheckGrounded())
         {
-            _rigidBody.AddForce(Vector2.up * _jumpStrength, ForceMode2D.Impulse);
+          
+            OnJump?.Invoke();
         }
+        else if (_coyoteTimer > 0f)
+        {
+            OnJump?.Invoke();
+        }
+        else if (_doubleJumpAvailable)
+        {
+            _doubleJumpAvailable = false;
+            OnJump?.Invoke();
+        }
+      
+    }
+
+    private void ApplyJumpForce()
+    {
+        _rigidBody.linearVelocity = Vector2.zero;
+        _timeInAir = 0f;
+        _coyoteTimer = 0f;
+        _rigidBody.AddForce(Vector2.up * _jumpStrength, ForceMode2D.Impulse);
     }
 
     private void HandleSpriteFlip()
@@ -135,5 +193,5 @@ public class PlayerController : MonoBehaviour
         {
             transform.eulerAngles = new Vector3(0f, 0f, 0f);
         }
-    } 
+    }
 }
