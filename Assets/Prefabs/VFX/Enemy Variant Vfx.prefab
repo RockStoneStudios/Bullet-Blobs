@@ -8,9 +8,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1047646461242891550, guid: dc989c5bb353e764b807316b84107037, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c51de2cede5f7ac488ddfe05cb881dcf, type: 2}
     - target: {fileID: 6073964605569596580, guid: dc989c5bb353e764b807316b84107037, type: 3}
       propertyPath: m_Name
-      value: Base Death VFX
+      value: Enemy Variant Vfx
       objectReference: {fileID: 0}
     - target: {fileID: 7089667975152861288, guid: dc989c5bb353e764b807316b84107037, type: 3}
       propertyPath: m_LocalPosition.x
