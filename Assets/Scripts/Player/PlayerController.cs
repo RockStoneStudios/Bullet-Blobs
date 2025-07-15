@@ -1,12 +1,15 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 
 public class PlayerController : MonoBehaviour
 {
     public static Action OnJump;
+    public static Action OnJetpack;
     public static PlayerController Instance;
 
+    [SerializeField] private TrailRenderer _jetPackTrailerRender;
     public Vector2 MoveInput => _frameInput.Move;
     [SerializeField] private Transform _feetTransform;
     [SerializeField] private Vector2 _groundCheck;
@@ -15,6 +18,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _extraGravity = 700f;
     [SerializeField] private float _gravityDelay = .2f;
     [SerializeField] private float _coyoteTime = .5f;
+    [SerializeField] private float _jetPackTime = .6f;
+    [SerializeField] private float _jetpackStrenght = 11.2f;
+
+    private Coroutine _jetPackCourutine;
     private float _timeInAir;
     private float _coyoteTimer;
     private bool _doubleJumpAvailable;
@@ -39,11 +46,13 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         OnJump += ApplyJumpForce;
+        OnJetpack += StartJetPack;
     }
 
     private void OnDisable()
     {
         OnJump -= ApplyJumpForce;
+        OnJetpack -= StartJetPack;
     }
 
     private void Update()
@@ -54,6 +63,7 @@ public class PlayerController : MonoBehaviour
         HandleJump();
         HandleSpriteFlip();
         GravityDelay();
+        JetPack();
     }
 
     private void CoyoteTimer()
@@ -158,7 +168,7 @@ public class PlayerController : MonoBehaviour
         }
         if (CheckGrounded())
         {
-          
+
             OnJump?.Invoke();
         }
         else if (_coyoteTimer > 0f)
@@ -170,7 +180,7 @@ public class PlayerController : MonoBehaviour
             _doubleJumpAvailable = false;
             OnJump?.Invoke();
         }
-      
+
     }
 
     private void ApplyJumpForce()
@@ -193,5 +203,31 @@ public class PlayerController : MonoBehaviour
         {
             transform.eulerAngles = new Vector3(0f, 0f, 0f);
         }
+    }
+
+    private void JetPack()
+    {
+        if (!_frameInput.Jetpack || _jetPackCourutine != null) return;
+        OnJetpack?.Invoke();
+    }
+
+    private void StartJetPack()
+    {
+        _jetPackTrailerRender.emitting = true;
+        _jetPackCourutine = StartCoroutine(JetpackRoutine());
+    }
+
+    private IEnumerator JetpackRoutine()
+    {
+        float jetTime = 0f;
+        while (jetTime < _jetPackTime)
+        {
+            jetTime += Time.deltaTime;
+            _rigidBody.linearVelocity = Vector2.up * _jetpackStrenght;
+            yield return null;
+        }
+        _jetPackTrailerRender.emitting = false;
+        _jetPackCourutine = null;
+
     }
 }

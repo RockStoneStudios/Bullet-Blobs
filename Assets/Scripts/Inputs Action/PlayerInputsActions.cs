@@ -34,7 +34,27 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                 {
+                    ""name"": ""Jetpack"",
+                    ""type"": ""Button"",
+                    ""id"": ""94f1b0db-7fdd-4899-8580-152279963c74"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Grenade"",
+                    ""type"": ""Button"",
+                    ""id"": ""e3f7f8cc-9d19-4cb0-8f87-1234567890ab"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
+
+
             ],
             ""bindings"": [
                 {
@@ -102,7 +122,29 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                }
+                },
+                            {
+                ""name"": """",
+                ""id"": ""ab12cd34-5678-90ef-abcd-1234567890ab"",
+                ""path"": ""<Keyboard>/z"",
+                ""interactions"": """",
+                ""processors"": """",
+                ""groups"": """",
+                ""action"": ""Jetpack"",
+                ""isComposite"": false,
+                ""isPartOfComposite"": false
+            },
+            {
+                ""name"": """",
+                ""id"": ""b1c2d3e4-5678-90ab-cdef-0987654321fe"",
+                ""path"": ""<Mouse>/rightButton"",
+                ""interactions"": """",
+                ""processors"": """",
+                ""groups"": """",
+                ""action"": ""Grenade"",
+                ""isComposite"": false,
+                ""isPartOfComposite"": false
+            }
             ]
         }
     ],
@@ -112,6 +154,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        m_Player_Jetpack = m_Player.FindAction("Jetpack", throwIfNotFound: true);
+        m_Player_Grenade = m_Player.FindAction("Grenade", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -175,17 +219,22 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Jump;
+    private readonly InputAction m_Player_Jetpack;
+    private readonly InputAction m_Player_Grenade;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
         public PlayerActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        public InputAction @Jetpack => m_Wrapper.m_Player_Jetpack;
+        public InputAction @Grenade => m_Wrapper.m_Player_Grenade;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
         public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
+
         public void AddCallbacks(IPlayerActions instance)
         {
             if (instance == null || m_Wrapper.m_PlayerActionsCallbackInterfaces.Contains(instance)) return;
@@ -196,6 +245,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @Jetpack.started += instance.OnJetpack;
+            @Jetpack.performed += instance.OnJetpack;
+            @Jetpack.canceled += instance.OnJetpack;
+            @Grenade.started += instance.OnJetpack;
+            @Grenade.performed += instance.OnJetpack;
+            @Grenade.canceled += instance.OnJetpack;
+
+
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -206,6 +263,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @Jetpack.started -= instance.OnJetpack;
+            @Jetpack.performed -= instance.OnJetpack;
+            @Jetpack.canceled -= instance.OnJetpack;
+            @Grenade.started -= instance.OnJetpack;
+            @Grenade.performed -= instance.OnJetpack;
+            @Grenade.canceled -= instance.OnJetpack;
+
+
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -227,5 +292,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnJetpack(InputAction.CallbackContext context);
+        void OnGrenade(InputAction.CallbackContext context);
     }
 }

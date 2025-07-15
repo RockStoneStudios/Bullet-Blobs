@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: DiscoBall
   m_EditorClassIdentifier: 
   AudioType: 1
-  Clip: {fileID: 8300000, guid: 198ef82a13f617047b6257fe777103fd, type: 3}
-  Loop: 1
+  Clip: {fileID: 8300000, guid: e63cf6dba479c7943942a27c348ad98e, type: 3}
+  Loop: 0
   RandomizePitch: 0
   RandomPitchRangeModifier: 0.1
-  Volume: 0.68
+  Volume: 1.66
   Pitch: 1

@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5848cba92cd2c1449931a15e1bad36d0, type: 3}
   m_Name: Sound Colections
   m_EditorClassIdentifier: 
+  FightMusic:
+  - {fileID: 11400000, guid: df39d903b400a2348954cf8c70237804, type: 2}
+  DiscoBallParty:
+  - {fileID: 11400000, guid: afef76d1e6c78e1479c268f286f5ba0d, type: 2}
   GunShoot:
   - {fileID: 11400000, guid: 7af2ef6d533f79d46999211d30f87772, type: 2}
   Jump:
@@ -19,3 +23,11 @@ MonoBehaviour:
   Splat:
   - {fileID: 11400000, guid: bdb344ddd5e8c32408a6e6af1e78dab2, type: 2}
   - {fileID: 11400000, guid: ecbdc2f0a07bfdb458db1742b22dc890, type: 2}
+  Jetpack:
+  - {fileID: 11400000, guid: 36ec2250fb5aa024a8c50eb5f6b6b80c, type: 2}
+  GrenadeBeep:
+  - {fileID: 11400000, guid: 7d329181022b0ec4fa25fd914a891a02, type: 2}
+  GrenadeShoot:
+  - {fileID: 11400000, guid: 39dd01d17f75faf4a8cee196479fa049, type: 2}
+  GreandeExplode:
+  - {fileID: 11400000, guid: e835f91170362444ebaa22a2ef8d9354, type: 2}
