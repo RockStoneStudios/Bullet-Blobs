@@ -4,6 +4,7 @@ using UnityEngine.Rendering;
 
 public class AudioManager : MonoBehaviour
 {
+    public static AudioManager Instance;
     [Range(0f, 2f)]
     [SerializeField] private float _masterVolume = 1f;
     [SerializeField] private SoundCollectionsSo _soundsCollections;
@@ -12,6 +13,13 @@ public class AudioManager : MonoBehaviour
 
     private AudioSource _currentMusic;
 
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+    }
 
     #region Unity Methods
     void Start()
@@ -23,16 +31,20 @@ public class AudioManager : MonoBehaviour
     {
         Gun.OnShoot += Gun_OnShoot;
         PlayerController.OnJump += PlayerController_OnJump;
+        PlayerController.OnJetpack += PlayerController_OnJetpack;
         Health.onDeath += Health_OnDeath;
         DiscoBallManager.OnDiscoBallHitEvent += DiscoBallMusic;
+        Gun.OnGranadeShoot += Gun_OnGrenadeShoot;
     }
 
     void OnDisable()
     {
         Gun.OnShoot -= Gun_OnShoot;
         PlayerController.OnJump -= PlayerController_OnJump;
+        PlayerController.OnJetpack -= PlayerController_OnJetpack;
         Health.onDeath -= Health_OnDeath;
         DiscoBallManager.OnDiscoBallHitEvent -= DiscoBallMusic;
+        Gun.OnGranadeShoot -= Gun_OnGrenadeShoot;
     }
 
     #endregion
@@ -123,15 +135,37 @@ public class AudioManager : MonoBehaviour
         PlayRandomSound(_soundsCollections.Splat);
     }
 
+    private void PlayerController_OnJetpack()
+    {
+        PlayRandomSound(_soundsCollections.Jetpack);
+    }
+
+    public void Grenade_OnBeep()
+    {
+        PlayRandomSound(_soundsCollections.GrenadeBeep);
+    }
+
+    public void Grenade_OnExplode()
+    {
+        PlayRandomSound(_soundsCollections.GreandeExplode);
+    }
+
+     private void Gun_OnGrenadeShoot()
+    {
+        PlayRandomSound(_soundsCollections.GrenadeShoot);
+    }
+
+
+    
 
     #endregion
 
     #region  Music
 
-        private void FightMusic()
-        {
-            PlayRandomSound(_soundsCollections.FightMusic);
-        }
+    private void FightMusic()
+    {
+        PlayRandomSound(_soundsCollections.FightMusic);
+    }
 
         private void DiscoBallMusic()
         {

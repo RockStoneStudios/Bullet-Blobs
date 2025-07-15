@@ -11,5 +11,9 @@ public class SoundCollectionsSo : ScriptableObject
     public AudioSO[] GunShoot;
     public AudioSO[] Jump;
     public AudioSO[] Splat;
+    public AudioSO[] Jetpack;
+    public AudioSO[] GrenadeBeep;
+    public AudioSO[] GrenadeShoot;
+    public AudioSO[] GreandeExplode;
 
 }
